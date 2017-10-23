@@ -1,4 +1,4 @@
-# MLPy - a machine learning library in mpython + numpy
+# MLPy - a machine learning library in python + numpy
 
 ## PURPOSE
 
@@ -13,18 +13,20 @@ algorithms are class-based and use `fit()` for training and `predict()` for esti
 
 ## ALGORITHMS & FUNCTIONS
 
-`tools.accuracy_score` : calculates accuracy score for categorical data
-`tools.batchGenerator` : an iterator for minibatch gradient descent
-`tools.train_test_split` : splits data according to the `train_size` parameter (as a decimal percent)
+### functions
+- `tools.accuracy_score` : calculates accuracy score for categorical data
+- `tools.batchGenerator` : an iterator for minibatch gradient descent
+- `tools.train_test_split` : splits data according to the `train_size` parameter (as a decimal percent)
 
-`linalg.Vector` : do basic vector operations (*this is based on the Udacity Linear Algebra Refresher code*)
-`linalg.Line` : do basic line operations (*this is based on the Udacity Linear Algebra Refresher code*)
+### algorithms
+- `linalg.Vector` : do basic vector operations (*based on the Udacity Linear Algebra Refresher code*)
+- `linalg.Line` : do basic line operations (*based on the Udacity Linear Algebra Refresher code*)
+- `neural.MultiLayerPerceptron` : multivariate MLP with stochastic minibatch gradient descent
+- `regression.ZeroRuleforRegression` : baseline estimation (predicts average y-value for any x)
+- `regression.LinearRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
+- `regression.LogisticRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
 
-`regression.ZeroRuleforRegression` : baseline estimation (predicts average y-value for any x)
-`regression.LinearRegression` : multivariate linear regression with (stochastic/minibatch) gradient descent and l2 regularization
-`regression.LogisticRegression` : multivariate logistic regression with (stochastic/minibatch) gradient descent and l2 regularization
 
-`neural.MultiLayerPerceptron` : multivariate MLP with stochastic minibatch gradient descent
 
 ## REFERENCES AND CITATIONS
 
