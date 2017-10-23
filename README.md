@@ -1,4 +1,4 @@
-# `MLPy` - a machine learning library in `python + numpy`
+# MLPy - a simple machine learning library in python + numpy
 
 ## PURPOSE
 
