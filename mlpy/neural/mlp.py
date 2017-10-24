@@ -24,7 +24,8 @@ class MultiLayerPerceptron:
         self.verbose = verbose
 
         # initialize weights, activations
-        # no input weights (duh)
+        # initialize randomly so each learns something different
+        # input weights are not considered
         self.h_acts = np.zeros((self.hidden_dim, self.batchsize))
         self.wh = np.random.uniform(size=(self.input_dim, self.hidden_dim))
         self.wout = np.random.uniform(size=(self.hidden_dim, self.output_dim))
@@ -68,22 +69,27 @@ class MultiLayerPerceptron:
 
         return out_error
 
+    # add a 'train' function for keras-type naming convention
     def train(self, x_data, y_data):
 
         self.fit(x_data, y_data)
 
         return
 
+    # main fitting function
     def fit(self, x_data, y_data):
 
+        # add 1 for bias term
         x_data = np.hstack((np.ones((x_data.shape[0], 1)), x_data))
 
+        # generator for minibatch gradient descent
         minibatch = batchGenerator(x_data, y_data, self.batchsize)
 
         # for each epoch (through all data)
         for i in range(self.epochs):
-            # for the number of minibatches:
+            # for the number of minibatches per epoch:
             for j in range(int(len(y_data)/self.batchsize)):
+
                 x_batch, y_batch = next(minibatch)
 
                 output = self._feedforward(x_batch)
@@ -91,21 +97,25 @@ class MultiLayerPerceptron:
                 out_error = self._backprop(x_batch, y_batch,
                                            self.h_acts, output)
 
-                error = np.average(out_error)
+                # sub the absolute values of the errors
+                error = np.sum(np.absolute(out_error))
 
             if self.verbose and i % self.print_iters == 0:
                 print('epoch', i, ': error %-.5f' % abs(error))
 
         return
 
+    # predict_proba outputs the raw activations
     def predict_proba(self, x_data):
 
+        # add 1 for bias term
         x_data = np.hstack((np.ones((x_data.shape[0], 1)), x_data))
 
         predictions = self._feedforward(x_data)
 
         return predictions
 
+    # predict rounds the outputs to 0 or 1
     def predict(self, x_data):
 
         pred_probas = self.predict_proba(x_data)
