@@ -7,7 +7,7 @@ this is an ongoing educational project, and focuses on well-commented, understan
 (although efficiency is considered to a degree, e.g. vector operations over iterations with for-loops)
 all code is intended to be well-commented, and stresses explanation of algorithm.
 
-while all functions and classes are hand-coded, we do reference other resources when designing the code. all references are listed below.
+while this is an educational project meant to be coded generally from scratch, other resources are referenced when designing the code for validation of procedure and confirmation of algorithms. references are listed below.
 
 algorithms are class-based and use `fit()` for training and `predict()` for estimation.
 
@@ -25,8 +25,6 @@ algorithms are class-based and use `fit()` for training and `predict()` for esti
 - `regression.ZeroRuleforRegression` : baseline estimation (predicts average y-value for any x)
 - `regression.LinearRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
 - `regression.LogisticRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
-
-
 
 ## REFERENCES AND CITATIONS
 
