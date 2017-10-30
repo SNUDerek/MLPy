@@ -78,7 +78,14 @@ class LinearRegression():
         # or you can use zeroes with np.zeros():
         weights = np.zeros(x_data.shape[1])
 
-        # STEP 3: OPTIMIZE COST FUNCTION
+        # STEP 3: INIT REGULARIZATION TERM LAMBDA
+        # make as array with bias = 0 so don't regularize bias
+        # then we can element-wise multiply with weights
+        # this is the second term in the ( 1 - lambda/m )
+        lmbda = np.array([self.lmb/x_data.shape[0] for i in range(x_data.shape[1])])
+        lmbda[0] = 0.0
+
+        # STEP 4: OPTIMIZE COST FUNCTION
         # using (stochastic) gradient descent
         iters = 0
         minibatch = batchGenerator(x_data, y_data, self.sgd)
@@ -105,8 +112,8 @@ class LinearRegression():
                 gradient = -(1.0 / x_batch.shape[0]) * difference.dot(x_batch)
 
             # get new predicted weights by stepping "backwards' along gradient
-            # use lambda parameter for regularization
-            new_weights = (1.0 - 2*self.lmb * 2*self.lr) * weights - gradient * self.lr
+            # use lambda parameter for regularization (calculated above)
+            new_weights = (weights - lmbda) - gradient * self.lr
 
             # check stopping condition
             if np.sum(abs(new_weights - weights)) < self.tol:

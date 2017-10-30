@@ -59,9 +59,9 @@ class LogisticRegression():
 
         # calculate cost function J (log-likelihood)
         # loglik = sum y_i theta.T x_i - log( 1 + e^b.T x_i )
-        loglik = np.sum(y_data*scores - np.log(1 + np.exp(scores)))
+        nloglik = -np.sum(y_data*scores - np.log(1 + np.exp(scores)))
 
-        return y_hat, difference, loglik
+        return y_hat, difference, nloglik
 
     # fit ("train") the function to the training data
     # inputs  : x and y data as np.arrays (x is array of x-dim arrays where x = features)
@@ -81,6 +81,15 @@ class LogisticRegression():
         # weights = np.random.randn(x_data.shape[1])
         # or you can use zeroes with np.zeros():
         weights = np.zeros(x_data.shape[1])
+
+        # STEP 3: INIT REGULARIZATION TERM LAMBDA
+        # make as array with bias = 0 so don't regularize bias
+        # then we can element-wise multiply with weights
+        # this is the second term in the ( 1 - lambda/m )
+        lmbda = np.array([self.lmb/x_data.shape[0] for i in range(x_data.shape[1])])
+        if self.intercept:
+            lmbda[0] = 0.0
+
         iters = 0
         minibatch = batchGenerator(x_data, y_data, self.sgd)
 
@@ -106,7 +115,8 @@ class LogisticRegression():
                 gradient = -np.dot(x_data.T, difference)
 
             # get new predicted weights by stepping "backwards' along gradient
-            new_weights = (1 - self.lr * self.lmb) * weights - gradient * self.lr
+            # use lambda parameter for regularization (calculated above)
+            new_weights = (weights - lmbda) - gradient * self.lr
 
             # check stopping condition
             if np.sum(abs(new_weights - weights)) < self.tol:
