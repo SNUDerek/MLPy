@@ -36,7 +36,9 @@ http://college.cengage.com/mathematics/brase/understandable_statistics/7e/studen
 
 ### LINEAR REGRESSION AND GRADIENT DESCENT
 https://www.cs.toronto.edu/~frossard/post/linear_regression/
+
 http://ozzieliu.com/2016/02/09/gradient-descent-tutorial/
+
 https://machinelearningmastery.com/implement-linear-regression-stochastic-gradient-descent-scratch-python/
 
 ### STOCHASTIC GRADIENT DESCENT
@@ -47,11 +49,17 @@ https://www.analyticsvidhya.com/blog/2016/01/complete-tutorial-ridge-lasso-regre
 
 ### LOGISTIC REGRESSION
 https://beckernick.github.io/logistic-regression-from-scratch/
+
 http://aimotion.blogspot.kr/2011/11/machine-learning-with-python-logistic.html
 
 ### REGULARIZATION (FOR LOGISTIC REGRESSION)
 https://courses.cs.washington.edu/courses/cse599c1/13wi/slides/l2-regularization-online-perceptron.pdf
 
 ### MULTI-LAYER PERCEPTRON
+http://florianmuellerklein.github.io/nn/
+
+https://rolisz.ro/2013/04/18/neural-networks-in-python/
+
 https://www.analyticsvidhya.com/blog/2017/05/neural-network-from-scratch-in-python-and-r/
+
 https://databoys.github.io/Feedforward/
