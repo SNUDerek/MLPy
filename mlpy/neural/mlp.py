@@ -6,7 +6,7 @@ from ..tools import batchGenerator
 # and https://www.analyticsvidhya.com/blog/2017/05/neural-network-from-scratch-in-python-and-r/
 class MultiLayerPerceptron:
 
-    def __init__(self, input_dim, hidden_dim, output_dim, epochs=1000, batch_size=16, lr=0.001, print_iters=1000, verbose=False):
+    def __init__(self, input_dim, hidden_dim, output_dim, hidden_layers=1, epochs=1000, batch_size=16, lr=0.001, print_iters=1000, verbose=False):
         """
         params:
             input_dim : number of input neurons
@@ -17,6 +17,7 @@ class MultiLayerPerceptron:
         self.input_dim = input_dim + 1 # add 1 for bias node
         self.hidden_dim = hidden_dim
         self.output_dim = output_dim
+        self.hidden_lyr = hidden_layers
         self.epochs = epochs
         self.batchsize = batch_size
         self.lr = lr
@@ -26,8 +27,10 @@ class MultiLayerPerceptron:
         # initialize weights, activations
         # initialize randomly so each learns something different
         # input weights are not considered
-        self.h_acts = np.zeros((self.hidden_dim, self.batchsize))
-        self.wh = np.random.uniform(size=(self.input_dim, self.hidden_dim))
+        self.h_acts = [np.zeros((self.hidden_dim, self.batchsize)) for l in range(self.hidden_lyr)]
+        self.wh = [np.random.uniform(size=(self.input_dim, self.hidden_dim))]
+        for l in range(self.hidden_lyr - 1):
+            self.wh.append(np.random.uniform(size=(self.hidden_dim, self.hidden_dim)))
         self.wout = np.random.uniform(size=(self.hidden_dim, self.output_dim))
 
     # internal function for sigmoid
@@ -48,9 +51,19 @@ class MultiLayerPerceptron:
     # Forward Propogation
     def _feedforward(self, x_batch):
 
-        hidden_layer_input = np.dot(x_batch, self.wh)
-        self.h_acts = self._sigmoid(hidden_layer_input)
-        output_layer_input = np.dot(self.h_acts, self.wout)
+        for i in range(self.hidden_lyr):
+
+            # multiply previous layer outputs by the weights
+            if i == 0:
+                hidden_layer_input = np.dot(x_batch, self.wh[i])
+            else:
+                hidden_layer_input = np.dot(self.h_acts[i-1], self.wh[i])
+
+            # run the activations though non-linearity
+            self.h_acts[i] = self._sigmoid(hidden_layer_input)
+
+        # calculate final output layer
+        output_layer_input = np.dot(self.h_acts[self.hidden_lyr-1], self.wout)
         output = self._sigmoid(output_layer_input)
 
         return output
@@ -58,16 +71,38 @@ class MultiLayerPerceptron:
     # Backpropagation
     def _backprop(self, x_batch, y_batch, hiddenlayer_activations, output):
 
-        out_error = y_batch - output
+        # calculate output error
+        # todo: add flag, calculation for categorical crossentropy
+        output_error = y_batch - output
         slope_output_layer = self._dsigmoid(output)
-        slope_hidden_layer = self._sigmoid(hiddenlayer_activations)
-        d_output = out_error * slope_output_layer
-        hidden_error = d_output.dot(self.wout.T)
-        d_hiddenlayer = hidden_error * slope_hidden_layer
-        self.wout += hiddenlayer_activations.T.dot(d_output) * self.lr
-        self.wh += x_batch.T.dot(d_hiddenlayer) * self.lr
+        d_output = output_error * slope_output_layer
 
-        return out_error
+        # propagate error, delta for each hidden layer
+        slope_hidden_layer = [[] for i in range(self.hidden_lyr)]
+        hidden_error = [[] for i in range(self.hidden_lyr)]
+        d_hiddenlayer = [[] for i in range(self.hidden_lyr)]
+
+        for i in range(len(hiddenlayer_activations)):
+            # BACK-propagate from the last layer (count backwards!)
+            idx = len(hiddenlayer_activations) - (i + 1)
+            slope_hidden_layer[idx] = self._sigmoid(hiddenlayer_activations[idx])
+
+            if i == 0:
+                hidden_error[idx] = d_output.dot(self.wout.T)
+            else:
+                hidden_error[idx] = d_hiddenlayer[idx+1].dot(self.wh[idx+1].T)
+
+            d_hiddenlayer[idx] = hidden_error[idx] * slope_hidden_layer[idx]
+
+        # weight updates for all layers
+        self.wout += hiddenlayer_activations[-1].T.dot(d_output) * self.lr
+        for i in range(len(hiddenlayer_activations)):
+            if i == 0:
+                self.wh[i] += x_batch.T.dot(d_hiddenlayer[i]) * self.lr
+            else:
+                self.wh[i] += hiddenlayer_activations[i-1].T.dot(d_hiddenlayer[i]) * self.lr
+
+        return output_error
 
     # add a 'train' function for keras-type naming convention
     def train(self, x_data, y_data):
