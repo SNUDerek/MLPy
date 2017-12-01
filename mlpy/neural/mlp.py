@@ -143,11 +143,10 @@ class MultiLayerPerceptron:
                                            self.h_acts, output)
 
                 # sub the absolute values of the errors
-                # error = np.sum(np.absolute(out_error))
+                error = np.sum(np.absolute(out_error))
 
             if self.verbose and i % self.print_iters == 0:
-                print('epoch', i, ': error %-.5f' % np.average(costs))
-                # print('epoch', i, ': error %-.5f' % error)
+                print('epoch', i, ': cross-entropy cost %-.5f' % np.average(costs), ': sum abs error %-.5f' % error)
 
         return
 
