@@ -8,13 +8,47 @@ from ..tools import batchGenerator
 # also see: https://www.youtube.com/watch?v=tIeHLnjs5U8
 class MultiLayerPerceptron:
 
-    def __init__(self, input_dim, hidden_dim, output_dim, hidden_layers=1, epochs=1000, batch_size=16, lr=0.001, print_iters=1000, verbose=False):
-        """
-        params:
-            input_dim : number of input neurons
-            hidden_dim : number of hidden neurons
-            output_dim : number of output neurons
-        """
+    def __init__(self, input_dim, hidden_dim, output_dim, hidden_layers=1, epochs=1000,
+                 batch_size=16, lr=0.001, print_iters=1000, verbose=False):
+        '''
+        Multi-Layer Perceptron with Sigmoid Activation and Binary Cross-Entropy Loss
+
+        for multi-class and multi-label tasks
+
+        Parameters
+        ----------
+        input_dim : int
+            number of input features - set by X.shape[1]
+        hidden_dim : int
+            number of features (neurons) in each hidden layer - set manually
+        output_dim : int
+            number of output features (classes) - set by y.shape[1]
+        hidden_layers : int
+            number of hidden layers
+        epochs : int
+            maximum epochs
+        batch_size : int
+            number of samples per batch for minibatch gradient descent
+        lr : float
+            learning rate
+        print_iters : int
+            how many iters between cost printout (if verbose)
+        verbose : bool
+            whether to print intermediate cost values during training
+        weights : array
+            weights (coefficients) of linear model
+
+        Attributes
+        -------
+        costs : list of floats
+            the binary cross-entropy costs per epoch
+        errors : list of floats
+            the averaged sum of absolute difference (pred - true) per epoch
+        wh : list of np.arrays
+            the weight vectors for each hidden layer
+        wout : np.array
+            the weight vector for the output layer
+        '''
 
         self.input_dim = input_dim + 1 # add 1 for bias node
         self.hidden_dim = hidden_dim
@@ -34,6 +68,8 @@ class MultiLayerPerceptron:
         for l in range(self.hidden_lyr - 1):
             self.wh.append(np.random.uniform(size=(self.hidden_dim, self.hidden_dim)))
         self.wout = np.random.uniform(size=(self.hidden_dim, self.output_dim))
+        self.costs = []
+        self.errors = []
 
     # internal function for sigmoid
     def _sigmoid(self, estimates):
@@ -50,7 +86,7 @@ class MultiLayerPerceptron:
 
         return deriv
 
-    # Forward Propogation
+    # Forward Propagation
     def _feedforward(self, x_batch):
 
         for i in range(self.hidden_lyr):
@@ -119,6 +155,17 @@ class MultiLayerPerceptron:
     # main fitting function
     def fit(self, x_data, y_data):
 
+        # reset costs from previous fittings
+        self.costs = []
+        self.errors = []
+
+        # re-initialize weight matrices
+        self.h_acts = [np.zeros((self.hidden_dim, self.batchsize)) for l in range(self.hidden_lyr)]
+        self.wh = [np.random.uniform(size=(self.input_dim, self.hidden_dim))]
+        for l in range(self.hidden_lyr - 1):
+            self.wh.append(np.random.uniform(size=(self.hidden_dim, self.hidden_dim)))
+        self.wout = np.random.uniform(size=(self.hidden_dim, self.output_dim))
+
         # add 1 for bias term
         x_data = np.hstack((np.ones((x_data.shape[0], 1)), x_data))
 
@@ -147,6 +194,9 @@ class MultiLayerPerceptron:
 
             if self.verbose and i % self.print_iters == 0:
                 print('epoch', i, ': cross-entropy cost %-.5f' % np.average(costs), ': sum abs error %-.5f' % error)
+
+            self.costs.append(np.average(costs))
+            self.errors.append(error)
 
         return
 
