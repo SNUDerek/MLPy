@@ -4,6 +4,7 @@ from ..tools import batchGenerator
 # multilayer perceptron
 # adapted from https://databoys.github.io/Feedforward/
 # and https://www.analyticsvidhya.com/blog/2017/05/neural-network-from-scratch-in-python-and-r/
+# also see: http://peterroelants.github.io/posts/neural_network_implementation_part02/ (and other parts)
 class MultiLayerPerceptron:
 
     def __init__(self, input_dim, hidden_dim, output_dim, hidden_layers=1, epochs=1000, batch_size=16, lr=0.001, print_iters=1000, verbose=False):
@@ -68,39 +69,42 @@ class MultiLayerPerceptron:
 
         return output
 
+    # cross-entropy cost function
+    def _cost(self, y, t):
+        return - np.sum(np.multiply(t, np.log(y)) + np.multiply((1 - t), np.log(1 - y)))
+
     # Backpropagation
-    def _backprop(self, x_batch, y_batch, hiddenlayer_activations, output):
+    def _backprop(self, x_batch, y_batch, hidden_layer_acts, output):
 
         # calculate output error
-        # todo: add flag, calculation for categorical crossentropy
         output_error = y_batch - output
-        slope_output_layer = self._dsigmoid(output)
-        d_output = output_error * slope_output_layer
+        grad_output_layer = self._dsigmoid(output)
+        delta_output = output_error * grad_output_layer
 
         # propagate error, delta for each hidden layer
-        slope_hidden_layer = [[] for i in range(self.hidden_lyr)]
+        grad_hidden_layer = [[] for i in range(self.hidden_lyr)]
         hidden_error = [[] for i in range(self.hidden_lyr)]
-        d_hiddenlayer = [[] for i in range(self.hidden_lyr)]
+        delta_hidden_layer = [[] for i in range(self.hidden_lyr)]
 
-        for i in range(len(hiddenlayer_activations)):
+        for i in range(len(hidden_layer_acts)):
             # BACK-propagate from the last layer (count backwards!)
-            idx = len(hiddenlayer_activations) - (i + 1)
-            slope_hidden_layer[idx] = self._sigmoid(hiddenlayer_activations[idx])
+            idx = len(hidden_layer_acts) - (i + 1)
+            grad_hidden_layer[idx] = self._dsigmoid(hidden_layer_acts[idx])
 
             if i == 0:
-                hidden_error[idx] = d_output.dot(self.wout.T)
+                hidden_error[idx] = delta_output.dot(self.wout.T)
             else:
-                hidden_error[idx] = d_hiddenlayer[idx+1].dot(self.wh[idx+1].T)
+                hidden_error[idx] = delta_hidden_layer[idx+1].dot(self.wh[idx+1].T)
 
-            d_hiddenlayer[idx] = hidden_error[idx] * slope_hidden_layer[idx]
+            delta_hidden_layer[idx] = hidden_error[idx] * grad_hidden_layer[idx]
 
         # weight updates for all layers
-        self.wout += hiddenlayer_activations[-1].T.dot(d_output) * self.lr
-        for i in range(len(hiddenlayer_activations)):
+        self.wout += hidden_layer_acts[-1].T.dot(delta_output) * self.lr
+        for i in range(len(hidden_layer_acts)):
             if i == 0:
-                self.wh[i] += x_batch.T.dot(d_hiddenlayer[i]) * self.lr
+                self.wh[i] += x_batch.T.dot(delta_hidden_layer[i]) * self.lr
             else:
-                self.wh[i] += hiddenlayer_activations[i-1].T.dot(d_hiddenlayer[i]) * self.lr
+                self.wh[i] += hidden_layer_acts[i - 1].T.dot(delta_hidden_layer[i]) * self.lr
 
         return output_error
 
@@ -122,12 +126,17 @@ class MultiLayerPerceptron:
 
         # for each epoch (through all data)
         for i in range(self.epochs):
+
+            costs = []
+
             # for the number of minibatches per epoch:
             for j in range(int(len(y_data)/self.batchsize)):
 
                 x_batch, y_batch = next(minibatch)
 
                 output = self._feedforward(x_batch)
+
+                costs.append(self._cost(output, y_batch))
 
                 out_error = self._backprop(x_batch, y_batch,
                                            self.h_acts, output)
@@ -136,7 +145,7 @@ class MultiLayerPerceptron:
                 error = np.sum(np.absolute(out_error))
 
             if self.verbose and i % self.print_iters == 0:
-                print('epoch', i, ': error %-.5f' % abs(error))
+                print('epoch', i, ': error %-.5f' % np.average(costs))
 
         return
 
