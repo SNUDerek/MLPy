@@ -5,6 +5,7 @@ from ..tools import batchGenerator
 # adapted from https://databoys.github.io/Feedforward/
 # and https://www.analyticsvidhya.com/blog/2017/05/neural-network-from-scratch-in-python-and-r/
 # also see: http://peterroelants.github.io/posts/neural_network_implementation_part02/ (and other parts)
+# also see: https://www.youtube.com/watch?v=tIeHLnjs5U8
 class MultiLayerPerceptron:
 
     def __init__(self, input_dim, hidden_dim, output_dim, hidden_layers=1, epochs=1000, batch_size=16, lr=0.001, print_iters=1000, verbose=False):
@@ -142,10 +143,11 @@ class MultiLayerPerceptron:
                                            self.h_acts, output)
 
                 # sub the absolute values of the errors
-                error = np.sum(np.absolute(out_error))
+                # error = np.sum(np.absolute(out_error))
 
             if self.verbose and i % self.print_iters == 0:
                 print('epoch', i, ': error %-.5f' % np.average(costs))
+                # print('epoch', i, ': error %-.5f' % error)
 
         return
 
