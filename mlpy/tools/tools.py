@@ -5,7 +5,7 @@ import numpy as np
 def accuracy_score(trues, preds):
 
     # number of cases where pred[i] == true[i] over total number of preds
-    acc = sum([1 for i in preds if preds[i]==trues[i]])/len(preds)
+    acc = float(sum([1.0 if preds[i]==trues[i] else 0.0 for i in range(len(preds))])/len(preds))
 
     return acc
 
@@ -28,6 +28,18 @@ def batchGenerator(x_data, y_data, batch_size):
             i = 0
         else:
             i += batch_size
+
+
+# ONE-HOT ENCODE
+# one-hot encodes an integer-indexed list/array
+def one_hot(vect, num_classes=0):
+
+    # if number of classes not defined, use # of unique classes in data
+    if num_classes == 0:
+        num_classes = len(set(vect))
+
+    # np.eye "trick"
+    return np.eye(num_classes)[vect]
 
 
 # TRAIN-TEST SPLIT
