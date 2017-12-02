@@ -40,10 +40,6 @@ class MultiLayerPerceptron:
 
         Attributes
         -------
-        costs : list of floats
-            the binary cross-entropy costs per epoch
-        errors : list of floats
-            the averaged sum of absolute difference (pred - true) per epoch
         wh : list of np.arrays
             the weight vectors for each hidden layer
         wout : np.array
@@ -68,13 +64,11 @@ class MultiLayerPerceptron:
         for l in range(self.hidden_lyr - 1):
             self.wh.append(np.random.uniform(size=(self.hidden_dim, self.hidden_dim)))
         self.wout = np.random.uniform(size=(self.hidden_dim, self.output_dim))
-        self.costs = []
-        self.errors = []
 
     # internal function for sigmoid
     def _sigmoid(self, estimates):
 
-        sigmoid = 1 / (1 + np.exp(-estimates))
+        sigmoid =
 
         return sigmoid
 
@@ -82,7 +76,7 @@ class MultiLayerPerceptron:
     # sigmoid(y) * (1.0 - sigmoid(y))
     def _dsigmoid(self, sig_y):
 
-        deriv = sig_y * (1.0 - sig_y)
+        deriv =
 
         return deriv
 
@@ -92,56 +86,39 @@ class MultiLayerPerceptron:
         for i in range(self.hidden_lyr):
 
             # multiply previous layer outputs by the weights
-            if i == 0:
-                hidden_layer_input = np.dot(x_batch, self.wh[i])
-            else:
-                hidden_layer_input = np.dot(self.h_acts[i-1], self.wh[i])
+
 
             # run the activations though non-linearity
-            self.h_acts[i] = self._sigmoid(hidden_layer_input)
+
 
         # calculate final output layer
-        output_layer_input = np.dot(self.h_acts[self.hidden_lyr-1], self.wout)
-        output = self._sigmoid(output_layer_input)
+
 
         return output
 
     # cross-entropy cost function
     def _cost(self, y, t):
-        return - np.sum(np.multiply(t, np.log(y)) + np.multiply((1 - t), np.log(1 - y)))
+
+        crossentropy = - np.sum(np.multiply(t, np.log(y)) + np.multiply((1 - t), np.log(1 - y)))
+
+        return crossentropy
 
     # Backpropagation
     def _backprop(self, x_batch, y_batch, hidden_layer_acts, output):
 
         # calculate output error
-        output_error = y_batch - output
-        grad_output_layer = self._dsigmoid(output)
-        delta_output = output_error * grad_output_layer
+
 
         # propagate error, delta for each hidden layer
-        grad_hidden_layer = [[] for i in range(self.hidden_lyr)]
-        hidden_error = [[] for i in range(self.hidden_lyr)]
-        delta_hidden_layer = [[] for i in range(self.hidden_lyr)]
+
 
         for i in range(len(hidden_layer_acts)):
             # BACK-propagate from the last layer (count backwards!)
             idx = len(hidden_layer_acts) - (i + 1)
-            grad_hidden_layer[idx] = self._dsigmoid(hidden_layer_acts[idx])
 
-            if i == 0:
-                hidden_error[idx] = delta_output.dot(self.wout.T)
-            else:
-                hidden_error[idx] = delta_hidden_layer[idx+1].dot(self.wh[idx+1].T)
-
-            delta_hidden_layer[idx] = hidden_error[idx] * grad_hidden_layer[idx]
 
         # weight updates for all layers
-        self.wout += hidden_layer_acts[-1].T.dot(delta_output) * self.lr
-        for i in range(len(hidden_layer_acts)):
-            if i == 0:
-                self.wh[i] += x_batch.T.dot(delta_hidden_layer[i]) * self.lr
-            else:
-                self.wh[i] += hidden_layer_acts[i - 1].T.dot(delta_hidden_layer[i]) * self.lr
+
 
         return output_error
 
@@ -155,17 +132,6 @@ class MultiLayerPerceptron:
     # main fitting function
     def fit(self, x_data, y_data):
 
-        # reset costs from previous fittings
-        self.costs = []
-        self.errors = []
-
-        # re-initialize weight matrices
-        self.h_acts = [np.zeros((self.hidden_dim, self.batchsize)) for l in range(self.hidden_lyr)]
-        self.wh = [np.random.uniform(size=(self.input_dim, self.hidden_dim))]
-        for l in range(self.hidden_lyr - 1):
-            self.wh.append(np.random.uniform(size=(self.hidden_dim, self.hidden_dim)))
-        self.wout = np.random.uniform(size=(self.hidden_dim, self.output_dim))
-
         # add 1 for bias term
         x_data = np.hstack((np.ones((x_data.shape[0], 1)), x_data))
 
@@ -175,28 +141,25 @@ class MultiLayerPerceptron:
         # for each epoch (through all data)
         for i in range(self.epochs):
 
-            costs = []
-
             # for the number of minibatches per epoch:
             for j in range(int(len(y_data)/self.batchsize)):
 
-                x_batch, y_batch = next(minibatch)
+                # get minibatch
 
-                output = self._feedforward(x_batch)
 
-                costs.append(self._cost(output, y_batch))
+                # get prediction
 
-                out_error = self._backprop(x_batch, y_batch,
-                                           self.h_acts, output)
 
-                # sub the absolute values of the errors
-                error = np.sum(np.absolute(out_error))
+                # backpropagation
 
+
+                # sum the absolute values of the errors
+
+
+            # print out error during training
             if self.verbose and i % self.print_iters == 0:
-                print('epoch', i, ': cross-entropy cost %-.5f' % np.average(costs), ': sum abs error %-.5f' % error)
+                print('epoch', i, ': sum abs error %-.5f' % error)
 
-            self.costs.append(np.average(costs))
-            self.errors.append(error)
 
         return
 
@@ -206,16 +169,19 @@ class MultiLayerPerceptron:
         # add 1 for bias term
         x_data = np.hstack((np.ones((x_data.shape[0], 1)), x_data))
 
-        predictions = self._feedforward(x_data)
+        # get activations
+
 
         return predictions
 
     # predict rounds the outputs to 0 or 1
     def predict(self, x_data):
 
-        pred_probas = self.predict_proba(x_data)
+        # get activations
 
-        predictions = np.around(pred_probas)
+
+        # use np.around to fix to 0, 1
+        
 
         return predictions
 
