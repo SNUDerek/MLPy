@@ -16,13 +16,14 @@ algorithms are class-based and use `fit()` for training and `predict()` for esti
 ### functions
 - `tools.accuracy_score` : calculates accuracy score for categorical data
 - `tools.batchGenerator` : an iterator for minibatch gradient descent
-- `tools.train_test_split` : splits data according to the `train_size` parameter (as a decimal percent)
+- `tools.one_hot` : turn an integer-indexed list/array into a 2-D matrix of one-hot vectors
+- `tools.train_test_split` : shuffles and splits data according to the `train_size` parameter
 
 ### algorithms
 - `linalg.Vector` : do basic vector operations (*based on the Udacity Linear Algebra Refresher code*)
 - `linalg.Line` : do basic line operations (*based on the Udacity Linear Algebra Refresher code*)
-- `neural.MultiLayerPerceptron` : [WIP] multivariate MLP with stochastic minibatch gradient descent
-- `regression.ZeroRuleforRegression` : baseline estimation (predicts average y-value for any x)
+- `neural.MultiLayerPerceptron` : multivariate MLP with stochastic minibatch gradient descent
+- `regression.ZeroRuleforRegression` : baseline mean/median regression
 - `regression.LinearRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
 - `regression.LogisticRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
 
