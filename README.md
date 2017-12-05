@@ -63,3 +63,7 @@ https://rolisz.ro/2013/04/18/neural-networks-in-python/
 https://www.analyticsvidhya.com/blog/2017/05/neural-network-from-scratch-in-python-and-r/
 
 https://databoys.github.io/Feedforward/
+
+http://peterroelants.github.io/posts/neural_network_implementation_part02/
+
+https://www.youtube.com/watch?v=tIeHLnjs5U8
