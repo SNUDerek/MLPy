@@ -59,3 +59,24 @@ def train_test_split(x_data, y_data, train_size=0.80):
     y_test = y_data[order[trainlen:]]
 
     return x_train, x_test, y_train, y_test
+
+# FLIESS' KAPPA
+# return fliess kappa for matrix of data
+# shape: N x k matrix where N = data points, k = categories
+def fliess_kappa(a):
+
+    if (type(a) != np.ndarray):
+        raise TypeError('Fliess Kappa input must be matrix')
+    if np.unique(np.sum(a, axis=1)).shape[0] > 1:
+        raise ValueError('Fliess Kappa evaluator numbers not even across samples')
+    if a.ndim != 2:
+        raise ValueError('Fliess Kappa input must be an N x k array')
+
+    pj = np.sum(a, axis=0)/np.sum(a)
+    n = np.mean(np.sum(a, axis=1))
+    pi = np.sum((a**2-a),axis=1)/((n)*(n-1))
+    pbar = np.sum(pi)/a.shape[0]
+    pbare = np.sum(pj**2)
+    kappa = (pbar-pbare)/(1.0-pbare)
+
+    return kappa
