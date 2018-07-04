@@ -3,6 +3,7 @@ from ..tools import batchGenerator
 
 # LINEAR REGRESSION
 # assumes linear model: y = w0 + w1x1 + w2x2 + w3x3 ... (e.g. the ol' y = mx + b)
+# error is mean squared error
 class LinearRegression():
     '''
     Linear regression with Gradient Descent
@@ -28,7 +29,7 @@ class LinearRegression():
     -------
     '''
 
-    def __init__(self, epochs=1000, lmb=0.0, lr=0.01, sgd=True, tol=1e-5):
+    def __init__(self, epochs=1000, lmb=0.0, lr=0.01, sgd=8, tol=1e-5):
         self.epochs=epochs
         self.lmb = lmb
         self.lr=lr
@@ -88,9 +89,15 @@ class LinearRegression():
         # STEP 4: OPTIMIZE COST FUNCTION
         # using (stochastic) gradient descent
         iters = 0
-        minibatch = batchGenerator(x_data, y_data, self.sgd)
-
-        for epoch in range(self.epochs):
+        
+        # choose between iterations of sgd and epochs
+        if self.sgd==0:
+            maxiters = self.epochs
+        else:
+            maxiters = self.epochs * int(len(y_data)/self.sgd)
+            minibatch = batchGenerator(x_data, y_data, self.sgd)
+            
+        for epoch in range(maxiters):
 
             # make an estimate, calculate the difference and the cost
             # then calculate gradient using cost function derivative
@@ -98,7 +105,7 @@ class LinearRegression():
 
             # GRADIENT DESCENT:
             # get gradient over ~all~ training instances each iteration
-            if self.sgd:
+            if self.sgd==0:
                 y_hat, difference, cost = self._getestimate(x_data, y_data, weights)
                 gradient = -(1.0 / x_data.shape[0]) * difference.dot(x_data)
 

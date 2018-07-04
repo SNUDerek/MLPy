@@ -3,17 +3,17 @@
 ## PURPOSE
 
 this is a library of machine learning algorithms implemented in python + numpy.
-this is an ongoing educational project, and focuses on well-commented, understandable code over efficiency.
+this is an ongoing (self-) educational project, and focuses on well-commented, understandable code over efficiency.
 (although efficiency is considered to a degree, e.g. vector operations over iterations with for-loops)
 all code is intended to be well-commented, and stresses explanation of algorithm.
 
 while this is an educational project meant to be coded generally from scratch, other resources are referenced when designing the code for validation of procedure and confirmation of algorithms. references are listed below.
 
-algorithms are class-based and use `fit()` for training and `predict()` for estimation.
+algorithms are class-based and use `fit()` for training and `predict()` for estimation, following `sklearn` standards.
 
 ## ALGORITHMS & FUNCTIONS
 
-### functions
+### basic functions
 - `tools.accuracy_score` : calculates accuracy score for categorical data
 - `tools.batchGenerator` : an iterator for minibatch gradient descent
 - `tools.one_hot` : turn an integer-indexed list/array into a 2-D matrix of one-hot vectors
@@ -26,6 +26,7 @@ algorithms are class-based and use `fit()` for training and `predict()` for esti
 - `regression.ZeroRuleforRegression` : baseline mean/median regression
 - `regression.LinearRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
 - `regression.LogisticRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
+- `tools.fliess_kappa` : calculate Fliess' Kappa inter-rater agreement score for N x k matrix of data
 
 ## REFERENCES AND CITATIONS
 

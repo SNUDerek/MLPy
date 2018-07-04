@@ -28,7 +28,7 @@ class LogisticRegression():
     -------
     '''
 
-    def __init__(self, epochs=1000, intercept=False, lmb=0.0, lr=0.01, sgd=True, tol=1e-5):
+    def __init__(self, epochs=1000, intercept=False, lmb=0.0, lr=0.01, sgd=0, tol=1e-5):
         self.epochs = epochs
         self.intercept = intercept
         self.lmb=lmb
@@ -91,17 +91,22 @@ class LogisticRegression():
             lmbda[0] = 0.0
 
         iters = 0
-        minibatch = batchGenerator(x_data, y_data, self.sgd)
-
-        # OPTIMIZE
-        for epoch in range(self.epochs):
+        
+        # choose between iterations of sgd and epochs
+        if self.sgd==0:
+            maxiters = self.epochs
+        else:
+            maxiters = self.epochs * int(len(y_data)/self.sgd)
+            minibatch = batchGenerator(x_data, y_data, self.sgd)
+            
+        for epoch in range(maxiters):
 
             # make an estimate, calculate the difference and the cost
             # gradient_ll = X.T(y - y_hat)
 
             # GRADIENT DESCENT:
             # get gradient over ~all~ training instances each iteration
-            if self.sgd:
+            if self.sgd==0:
                 y_hat, difference, cost = self._getestimate(x_data, y_data, weights)
                 gradient = -np.dot(x_data.T, difference)
 
