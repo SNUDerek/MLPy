@@ -19,14 +19,17 @@ algorithms are class-based and use `fit()` for training and `predict()` for esti
 - `tools.one_hot` : turn an integer-indexed list/array into a 2-D matrix of one-hot vectors
 - `tools.train_test_split` : shuffles and splits data according to the `train_size` parameter
 
-### algorithms
-- `linalg.Vector` : do basic vector operations (*based on the Udacity Linear Algebra Refresher code*)
-- `linalg.Line` : do basic line operations (*based on the Udacity Linear Algebra Refresher code*)
+### discrete algorithms
+- `linalg.Vector` : do basic vector operations (*based on the Udacity Linear Algebra Refresher course*)
+- `linalg.Line` : do basic line operations (*based on the Udacity Linear Algebra Refresher course*)
+- `tools.fliess_kappa` : calculate Fliess' Kappa inter-rater agreement score for N x k matrix of data
+
+### machine learning algorithms
 - `neural.MultiLayerPerceptron` : multivariate MLP with stochastic minibatch gradient descent
 - `regression.ZeroRuleforRegression` : baseline mean/median regression
 - `regression.LinearRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
 - `regression.LogisticRegression` : multivariate, with (stochastic/minibatch) gradient descent and l2 regularization
-- `tools.fliess_kappa` : calculate Fliess' Kappa inter-rater agreement score for N x k matrix of data
+
 
 ## REFERENCES AND CITATIONS
 
