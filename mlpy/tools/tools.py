@@ -80,3 +80,87 @@ def fliess_kappa(a):
     kappa = (pbar-pbare)/(1.0-pbare)
 
     return kappa
+
+# BOX AND WHISKERS PLOT (ASCII)
+# https://www.statcan.gc.ca/edu/power-pouvoir/ch12/5214889-eng.htm
+# tukey: https://en.wikipedia.org/wiki/Box_plot
+# https://stats.stackexchange.com/questions/70801/how-to-normalize-data-to-0-1-range
+# https://stackoverflow.com/questions/31818050/round-number-to-nearest-integer
+def boxplot(lst, slen=64, pctile=2, verbose=False):
+    """draw a box and whiskers plot ascii-art style
+    
+    Arguments
+    ---------
+    lst : list
+        list of values
+    slen : int
+        length of rendered box plot, in characters
+    pctile : int
+        percentile range for plot whiskers. 2 (2nd to 98th) and 9 are common
+    verbose : bool
+        if True, it will print some statistics and the final plot
+    
+    Returns
+    -------
+    plotstring : str
+        boxplot rendered as a string of length slen    
+    """
+    
+    lo = np.percentile(lst, pctile)
+    q1 = np.percentile(lst, 25)
+    q2 = np.percentile(lst, 50)
+    q3 = np.percentile(lst, 75)
+    hi = np.percentile(lst, 100-pctile)
+    
+    if verbose:
+        print('statistics for {} elements:'.format(len(lst)))
+        print('min   :', np.min(lst))
+        if pctile != 0:
+            print('{:2}%   :'.format(pctile), np.percentile(lst, pctile))
+        print('25%   :', q1, '(',q2-q1, 'from median )')
+        print('50%   :', q2)
+        print('75%   :', q3, '(',q3-q2, 'from median )')
+        if pctile != 0:
+            print('{:2}%   :'.format(100-pctile), np.percentile(lst, 100-pctile))
+        print('max   :', np.max(lst))
+
+    # reset values to 0, slen
+    m  = ((slen-1))/(hi-lo)
+    b  = (slen-1) - m * hi
+    lo = int(round(m * lo + b))
+    q1 = int(round(m * q1 + b))
+    q2 = int(round(m * q2 + b))
+    q3 = int(round(m * q3 + b))
+    hi = int(round(m * hi + b))
+    # draw plot
+    plot = []
+    for i in range(slen):
+        if i == 0:
+            plot.append('|')
+        elif i < q1:
+            plot.append('-')
+        elif i == q1:
+            plot.append('[')
+        elif i < q2:
+            plot.append(' ')
+        elif i == q2:
+            plot.append('|')
+        elif i < q3:
+            plot.append(' ')
+        elif i == q3:
+            plot.append(']')
+        elif i < hi:
+            plot.append('-')
+        elif i == hi:
+            plot.append('|')
+    
+    plotstring = ''.join(plot)
+    
+    if verbose:
+        if pctile == 0:
+            print('\nbox plot from max to min:\n')
+        else:
+            print('\nbox plot from {} to {} percentile:\n'.format(pctile, 100-pctile))
+        print(plotstring)
+
+    return plotstring
